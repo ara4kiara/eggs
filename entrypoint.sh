@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Install global packages needed at runtime
-npm install -g pm2@latest --unsafe-perm
-
 # Update and install dependencies if needed
 if [[ -d .git ]] && [[ ${AUTO_UPDATE} == "1" ]]; then
     git pull
@@ -23,10 +20,10 @@ if [[ ! -z ${PYTHON_PACKAGES} ]]; then
     pip3 install ${PYTHON_PACKAGES}
 fi
 
-# Start the application with PM2
+# Start the application
 if [[ ${CMD_RUN} =~ ^npm ]]; then
     # If it's an npm command, run it directly
-    ${CMD_RUN}
+    exec ${CMD_RUN}
 else
     # Check if the file exists
     if [ ! -f /home/container/${CMD_RUN} ]; then
@@ -34,5 +31,5 @@ else
         exit 1
     fi
     # Start with PM2
-    pm2 start ${CMD_RUN} --no-daemon
+    exec pm2-runtime start ${CMD_RUN} --no-daemon
 fi
