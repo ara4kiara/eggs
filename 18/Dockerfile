@@ -7,6 +7,9 @@ RUN apt -y install ffmpeg iproute2 git sqlite3 libsqlite3-dev ca-certificates dn
     && apt -y install python3 python3-dev python3-pip chromium chromium-driver \
     && useradd -m -d /home/container container
 
+# Install PM2 globally as root
+RUN npm install -g pm2@latest --unsafe-perm
+
 # Copy entrypoint.sh and give execute permissions as root
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
