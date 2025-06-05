@@ -7,12 +7,12 @@ fi
 
 # Install additional packages if specified
 if [[ ! -z ${NODE_PACKAGES} ]]; then
-    npm install ${NODE_PACKAGES} --no-optional
+    npm install ${NODE_PACKAGES}
 fi
 
 # Install dependencies from package.json if it exists
 if [ -f /home/container/package.json ]; then
-    npm install --no-optional
+    npm install
 fi
 
 # Install Python packages
