@@ -15,7 +15,7 @@
         "Node.js 22 with PM2": "ghcr.io/ara4kiara/eggs:22"
     },
     "file_denylist": [],
-    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [[ ! -z ${NODE_PACKAGES} ]]; then npm install ${NODE_PACKAGES}; fi; if [[ ! -z ${PYTHON_PACKAGES} ]]; then pip3 install ${PYTHON_PACKAGES}; fi; if [ -f /home/container/package.json ]; then npm install; fi; if [[ {{CMD_RUN}} =~ ^npm ]]; then exec {{CMD_RUN}}; else if [ ! -f /home/container/{{CMD_RUN}} ]; then echo \"Error: File {{CMD_RUN}} not found\"; exit 1; fi; exec pm2-runtime start {{CMD_RUN}} --no-daemon; fi",
+    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [[ ! -z ${NODE_PACKAGES} ]]; then npm install ${NODE_PACKAGES}; fi; if [[ ! -z ${PYTHON_PACKAGES} ]]; then pip3 install ${PYTHON_PACKAGES}; fi; if [ -f /home/container/package.json ]; then npm install; fi; if [[ {{CMD_RUN}} =~ ^npm ]]; then exec {{CMD_RUN}}; else if [ ! -f /home/container/{{CMD_RUN}} ]; then echo \"Error: File {{CMD_RUN}} not found\"; exit 1; fi; exec pm2-runtime start {{CMD_RUN}}; fi",
     "config": {
         "files": "{}",
         "startup": "{\n    \"done\": \"PM2 process started\"\n}",
