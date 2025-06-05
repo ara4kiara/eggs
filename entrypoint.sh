@@ -31,5 +31,5 @@ else
         exit 1
     fi
     # Start with PM2
-    exec pm2-runtime start ${CMD_RUN} --no-daemon
+    exec pm2-runtime start ${CMD_RUN}
 fi
