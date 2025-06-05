@@ -8,7 +8,7 @@ RUN apt -y install git ca-certificates curl build-essential libtool \
     && useradd -m -d /home/container container
 
 # Install PM2 globally as root
-RUN npm install -g pm2@latest --unsafe-perm
+RUN npm install -g pm2@latest
 
 # Copy entrypoint.sh and give execute permissions as root
 COPY ./entrypoint.sh /entrypoint.sh
