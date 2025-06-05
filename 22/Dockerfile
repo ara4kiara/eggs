@@ -3,8 +3,9 @@ FROM node:22-bullseye-slim
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
 RUN apt update
-RUN apt -y install git curl build-essential python3 python3-pip chromium chromium-driver \
-    && useradd -m -d /home/container container
+RUN apt -y install git ca-certificates curl build-essential libtool \
+    && apt -y install python3 python3-pip chromium chromium-driver pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev \
+    && useradd -m -d /home/container container      
 
 # Install PM2 globally as root
 RUN npm install -g pm2@latest --unsafe-perm
@@ -21,4 +22,3 @@ WORKDIR /home/container
 RUN pip3 install --upgrade pip setuptools wheel
 
 CMD [ "/bin/bash", "/entrypoint.sh" ] 
- 
