@@ -3,7 +3,7 @@ FROM node:20-bullseye-slim
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
 RUN apt update
-RUN apt -y install git ca-certificates curl build-essential libtool \
+RUN apt -y install git ca-certificates curl build-essential libtool iproute2 iputils-ping \
     && apt -y install python3 python3-pip chromium chromium-driver \
     && useradd -m -d /home/container container
 
@@ -21,5 +21,4 @@ WORKDIR /home/container
 # Install Python packages
 RUN pip3 install --upgrade pip setuptools wheel
 
-CMD [ "/bin/bash", "/entrypoint.sh" ] 
- 
+CMD [ "/bin/bash", "/entrypoint.sh" ]
