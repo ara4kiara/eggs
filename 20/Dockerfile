@@ -3,8 +3,8 @@ FROM node:20-bullseye-slim
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
 RUN apt update
-RUN apt -y install ffmpeg git dnsutils ca-certificates curl build-essential libtool iproute2 iputils-ping \
-    && apt -y install python3 python3-pip chromium chromium-driver \
+RUN apt -y install ffmpeg git sqlite3 libsqlite3-dev dnsutils ca-certificates tzdata zip tar curl build-essential libtool iproute2 iputils-ping \
+    && apt -y install python3 python3-dev python3-pip chromium chromium-driver \
     && useradd -m -d /home/container container
 
 # Install PM2 globally as root
