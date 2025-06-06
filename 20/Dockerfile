@@ -3,7 +3,7 @@ FROM node:20-bullseye-slim
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
 RUN apt update
-RUN apt -y install git ca-certificates curl build-essential libtool iproute2 iputils-ping \
+RUN apt -y install ffmpeg git dnsutils ca-certificates curl build-essential libtool iproute2 iputils-ping \
     && apt -y install python3 python3-pip chromium chromium-driver \
     && useradd -m -d /home/container container
 
