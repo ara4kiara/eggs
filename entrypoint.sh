@@ -30,6 +30,11 @@ else
         echo "Error: File ${CMD_RUN} not found"
         exit 1
     fi
-    # Start with PM2
-    exec pm2-runtime start ${CMD_RUN}
+# Start with PM2
+  echo "Starting application with PM2..."
+  pm2 start ${CMD_RUN}
+  echo "Saving PM2 configuration..."
+  pm2 save
+  echo "Showing PM2 logs..."
+  exec pm2 logs
 fi
