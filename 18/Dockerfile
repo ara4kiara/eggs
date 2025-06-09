@@ -7,6 +7,9 @@ RUN apt -y install git ca-certificates curl build-essential libtool \
     && apt -y install python3 python3-pip chromium chromium-driver \
     && useradd -m -d /home/container container
 
+# Install PM2 globally as root
+RUN npm install -g pm2@5.4.3
+
 # Copy entrypoint.sh and give execute permissions as root
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
