@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Install global packages needed at runtime
+    npm install -g pm2@latest
+
 # Update and install dependencies if needed
 if [[ -d .git ]] && [[ ${AUTO_UPDATE} == "1" ]]; then
     git pull
@@ -31,5 +34,5 @@ else
         exit 1
     fi
     # Start with PM2
-    exec pm2-runtime start ${CMD_RUN}
+    pm2 start ${CMD_RUN} --no-daemon
 fi
