@@ -21,16 +21,23 @@ if [[ ! -z ${PYTHON_PACKAGES} ]]; then
 fi
 
 # Start the application
-if [[ ${CMD_RUN} =~ ^npm ]]; then
-    # If it's an npm command, run it directly
+if [[ ${CMD_RUN} == "bash" ]]; then
+    echo -e "\n\e[1;34m========================================="
+    echo -e "\e[1;32m        Konsol Bash Aktif 🚀\e[0m"
+    echo -e "\e[1;34m========================================="
+    echo -e "\e[1;36mCreated by: ar4kiara | Pterodactyl Panel\e[0m"
+    echo -e "\e[1;34m-----------------------------------------\e[0m"
+    echo -e "\e[1;33mSilakan masukkan perintah Anda...\e[0m\n"
+    exec bash
+elif [[ ${CMD_RUN} =~ ^npm ]]; then
+    exec ${CMD_RUN}
+elif [[ ${CMD_RUN} =~ ^yarn ]]; then
     exec ${CMD_RUN}
 else
-    # Check if the file exists
     if [ ! -f /home/container/${CMD_RUN} ]; then
         echo "Error: File ${CMD_RUN} not found"
         exit 1
     fi
-# Start with PM2
-  pm2 start ${CMD_RUN} && pm2 save
-  exec pm2 logs
+    pm2 start ${CMD_RUN} && pm2 save
+    exec pm2 logs
 fi
