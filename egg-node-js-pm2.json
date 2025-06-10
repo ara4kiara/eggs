@@ -5,7 +5,7 @@
         "update_url": null
     },
     "exported_at": "2024-03-19T00:00:00+00:00",
-    "name": "Egg With PM2",
+    "name": "My Egg With PM2",
     "author": "ar4kiara.vps@gmail.com",
     "description": "Node.js egg with PM2 process manager, Python3, pip3, and Chromium support",
     "features": null,
@@ -15,7 +15,7 @@
         "Node.js 22 with PM2": "ghcr.io/ara4kiara/eggs:22"
     },
     "file_denylist": [],
-    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [[ ! -z ${NODE_PACKAGES} ]]; then npm install ${NODE_PACKAGES}; fi; if [[ ! -z ${PYTHON_PACKAGES} ]]; then pip3 install ${PYTHON_PACKAGES}; fi; if [ -f /home/container/package.json ]; then npm install; fi; if [[ {{CMD_RUN}} =~ ^npm ]]; then exec {{CMD_RUN}}; else if [ ! -f /home/container/{{CMD_RUN}} ]; then echo \"Error: File {{CMD_RUN}} not found\"; exit 1; fi; pm2 start {{CMD_RUN}} && pm2 save; exec pm2 logs; fi",
+    "startup": "if [[ -d .git ]] && [[ {{AUTO_UPDATE}} == \"1\" ]]; then git pull; fi; if [[ ! -z ${NODE_PACKAGES} ]]; then npm install ${NODE_PACKAGES}; fi; if [[ ! -z ${PYTHON_PACKAGES} ]]; then pip3 install ${PYTHON_PACKAGES}; fi; if [ -f /home/container/package.json ]; then npm install; fi; if [[ {{CMD_RUN}} == \"bash\" ]]; then echo -e \"\\n\\e[1;34m=========================================\"; echo -e \"\\e[1;32m        Konsol Bash Aktif \ud83d\ude80\\e[0m\"; echo -e \"\\e[1;34m=========================================\"; echo -e \"\\e[1;36mCreated by: ar4kiara | Pterodactyl Panel\\e[0m\"; echo -e \"\\e[1;34m-----------------------------------------\\e[0m\"; echo -e \"\\e[1;33mSilakan masukkan perintah Anda...\\e[0m\\n\"; exec bash; elif [[ {{CMD_RUN}} =~ ^npm ]]; then exec {{CMD_RUN}}; elif [[ {{CMD_RUN}} =~ ^yarn ]]; then exec {{CMD_RUN}}; else if [ ! -f /home/container/{{CMD_RUN}} ]; then echo \"Error: File {{CMD_RUN}} not found\"; exit 1; fi; pm2 start {{CMD_RUN}} && pm2 save; exec pm2 logs; fi",
     "config": {
         "files": "{}",
         "startup": "{\n    \"done\": \"PM2 process started\"\n}",
@@ -91,4 +91,4 @@
             "field_type": "text"
         }
     ]
-} 
+}
