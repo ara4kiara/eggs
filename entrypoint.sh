@@ -33,11 +33,27 @@ elif [[ ${CMD_RUN} =~ ^npm ]]; then
     exec ${CMD_RUN}
 elif [[ ${CMD_RUN} =~ ^yarn ]]; then
     exec ${CMD_RUN}
+elif [[ ${CMD_RUN} =~ ^node ]]; then
+    exec ${CMD_RUN}
 else
-    if [ ! -f /home/container/${CMD_RUN} ]; then
-        echo "Error: File ${CMD_RUN} not found"
-        exit 1
+    # Cek jika CMD_RUN mengandung spasi (ada argumen)
+    if [[ "${CMD_RUN}" == *" "* ]]; then
+        FILE=$(echo ${CMD_RUN} | awk '{print $1}')
+        ARGS=$(echo ${CMD_RUN} | cut -d' ' -f2-)
+        if [ ! -f /home/container/${FILE} ]; then
+            echo "Error: File ${FILE} not found"
+            exit 1
+        fi
+        pm2 start ${FILE} --name ${FILE%%.*} -- ${ARGS}
+        pm2 save
+        exec pm2 logs
+    else
+        if [ ! -f /home/container/${CMD_RUN} ]; then
+            echo "Error: File ${CMD_RUN} not found"
+            exit 1
+        fi
+        pm2 start ${CMD_RUN}
+        pm2 save
+        exec pm2 logs
     fi
-    pm2 start ${CMD_RUN} && pm2 save
-    exec pm2 logs
 fi
