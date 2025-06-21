@@ -2,16 +2,10 @@ FROM node:18-bullseye-slim
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    git ca-certificates curl build-essential libtool \
-    python3 python3-pip chromium chromium-driver ffmpeg \
-    imagemagick libwebp-dev libwebp-tools \
-    libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
-    libgstreamer1.0-dev gstreamer1.0-plugins-base \
-    pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev \
-    && useradd -m -d /home/container container \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt update
+RUN apt -y install git ca-certificates curl build-essential libtool ffmpeg imagemagick libwebp-dev fonts-noto fonts-freefont-ttf \
+    && apt -y install python3 python3-pip chromium chromium-driver \
+    && useradd -m -d /home/container container
 
 # Install PM2 globally as root
 RUN npm install -g pm2@latest --unsafe-perm
