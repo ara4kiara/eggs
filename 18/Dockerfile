@@ -4,7 +4,10 @@ LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
 RUN apt update
 RUN apt -y install git ca-certificates curl build-essential libtool \
-    && apt -y install python3 python3-pip chromium chromium-driver \
+    && apt -y install python3 python3-pip chromium chromium-driver ffmpeg \
+    && apt -y install imagemagick libwebp-dev libwebp-tools webp \
+    && apt -y install libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
+    && apt -y install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
     && useradd -m -d /home/container container
 
 # Install PM2 globally as root
