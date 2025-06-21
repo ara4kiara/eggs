@@ -56,5 +56,17 @@ jobs:
           context: ./22
           push: true
           tags: ghcr.io/ara4kiara/eggs:22
+          no-cache: true
+
+      # Step to copy entrypoint.sh before building 24
+      - name: Prepare for Node.js 24 build
+        run: cp entrypoint.sh 24/
+
+      - name: Build and push Node.js 24
+        uses: docker/build-push-action@v2
+        with:
+          context: ./24
+          push: true
+          tags: ghcr.io/ara4kiara/eggs:24
           no-cache: true 
           
