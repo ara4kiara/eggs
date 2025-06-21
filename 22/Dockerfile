@@ -3,7 +3,7 @@ FROM node:22-bullseye-slim
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
 RUN apt update
-RUN apt -y install git ca-certificates curl build-essential libtool ffmpeg imagemagick \
+RUN apt -y install git ca-certificates curl build-essential libtool ffmpeg \
     && apt -y install python3 python3-pip chromium chromium-driver pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev \
     && useradd -m -d /home/container container      
 
