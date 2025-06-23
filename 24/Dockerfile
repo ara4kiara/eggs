@@ -21,4 +21,7 @@ WORKDIR /home/container
 # Install Python packages
 RUN pip3 install --upgrade pip setuptools wheel
 
+# Pastikan package canvas sudah versi terbaru agar support Node.js 24
+# Jika error, downgrade base image ke node:22-bullseye-slim
+
 CMD [ "/bin/bash", "/entrypoint.sh" ] 
