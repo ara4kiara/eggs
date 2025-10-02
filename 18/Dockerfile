@@ -7,6 +7,8 @@ RUN apt -y install git ca-certificates curl build-essential libtool ffmpeg zip u
     && apt -y install python3 python3-pip chromium chromium-driver \
     && useradd -m -d /home/container container
 
+RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf
+
 # Install PM2 globally as root
 RUN npm install -g pm2@latest --unsafe-perm
 
@@ -17,14 +19,6 @@ RUN chmod +x /entrypoint.sh
 USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
-
-RUN mkdir -p /home/container/.config/pip && \
-    printf "[global]\nbreak-system-packages = true\n" > /home/container/.config/pip/pip.conf
-
-# ================================================================= #
-# LANGKAH DEBUGGING: Tambahkan baris ini untuk verifikasi
-RUN ls -la /home/container/.config/pip/
-# ================================================================= #
 
 # Install Python packages
 RUN pip3 install --upgrade pip setuptools wheel
