@@ -20,10 +20,11 @@ ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
 # Install Python packages
-RUN pip3 install --upgrade pip setuptools wheel
+RUN pip3 install --upgrade pip setuptools wheel --break-system-packages
 
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 
 CMD [ "/bin/bash", "/entrypoint.sh" ] 
+
 
 
