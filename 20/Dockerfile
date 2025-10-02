@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim 
+FROM node:20-bookworm-slim
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
@@ -22,6 +22,7 @@ WORKDIR /home/container
 RUN pip3 install --upgrade pip setuptools wheel --break-system-packages
 
 CMD [ "/bin/bash", "/entrypoint.sh" ]
+
 
 
 
