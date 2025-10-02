@@ -1,4 +1,4 @@
-FROM node:22-bullseye-slim
+FROM node:22-bookworm-slim
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
@@ -25,4 +25,5 @@ RUN pip3 install --upgrade pip setuptools wheel
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 
 CMD [ "/bin/bash", "/entrypoint.sh" ] 
+
 
