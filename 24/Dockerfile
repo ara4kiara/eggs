@@ -5,7 +5,9 @@ LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 RUN apt update
 RUN apt -y install git ca-certificates curl build-essential libtool ffmpeg zip unzip imagemagick \
     && apt -y install python3 python3-pip chromium chromium-driver pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev \
-    && useradd -m -d /home/container container      
+    && useradd -m -d /home/container container
+
+RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf
 
 # Install PM2 globally as root
 RUN npm install -g pm2@latest --unsafe-perm
@@ -17,9 +19,6 @@ RUN chmod +x /entrypoint.sh
 USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
-
-RUN mkdir -p /home/container/.config/pip && \
-    printf "[global]\nbreak-system-packages = true\n" > /home/container/.config/pip/pip.conf
 
 # Install Python packages
 RUN pip3 install --upgrade pip setuptools wheel
