@@ -6,7 +6,9 @@ RUN apt update
 RUN apt -y install git ca-certificates curl build-essential libtool ffmpeg zip unzip imagemagick \
     && apt -y install python3 python3-pip chromium chromium-driver pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev \
     && apt-get update && apt-get install -y libvips libvips-dev libglib2.0-dev \
-    && useradd -m -d /home/container container      
+    && useradd -m -d /home/container container
+
+RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf
 
 # Install PM2 globally as root
 RUN npm install -g pm2@latest --unsafe-perm
@@ -19,15 +21,13 @@ USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
-RUN mkdir -p /home/container/.config/pip && \
-    printf "[global]\nbreak-system-packages = true\n" > /home/container/.config/pip/pip.conf
-
 # Install Python packages
 RUN pip3 install --upgrade pip setuptools wheel
 
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 
 CMD [ "/bin/bash", "/entrypoint.sh" ] 
+
 
 
 
