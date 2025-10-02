@@ -1,4 +1,4 @@
-FROM node:24-bullseye-slim
+FROM node:24-bookworm-slim
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
