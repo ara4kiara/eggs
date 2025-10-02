@@ -18,8 +18,11 @@ USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
+RUN mkdir -p /home/container/.config/pip && \
+    echo -e "[global]\nbreak-system-packages = true" > /home/container/.config/pip/pip.conf
+
 # Install Python packages
-RUN pip3 install --upgrade pip setuptools wheel --break-system-packages
+RUN pip3 install --upgrade pip setuptools wheel
 
 # Pastikan package canvas sudah versi terbaru agar support Node.js 24
 # Jika error, downgrade base image ke node:22-bullseye-slim
