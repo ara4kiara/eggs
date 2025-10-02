@@ -19,7 +19,7 @@ ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
 # Install Python packages
-RUN pip3 install --upgrade pip setuptools wheel
+RUN pip3 install --upgrade pip setuptools wheel --break-system-packages
 
 # Pastikan package canvas sudah versi terbaru agar support Node.js 24
 # Jika error, downgrade base image ke node:22-bullseye-slim
