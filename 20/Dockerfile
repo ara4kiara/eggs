@@ -1,4 +1,4 @@
-FROM node:20-bullseye-slim
+FROM node:20-bookworm-slim
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
@@ -22,4 +22,5 @@ WORKDIR /home/container
 RUN pip3 install --upgrade pip setuptools wheel
 
 CMD [ "/bin/bash", "/entrypoint.sh" ]
+
 
