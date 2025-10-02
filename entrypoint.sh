@@ -17,7 +17,7 @@ fi
 
 # Install Python packages
 if [[ ! -z ${PYTHON_PACKAGES} ]]; then
-    pip3 install ${PYTHON_PACKAGES} --break-system-packages
+    pip3 install ${PYTHON_PACKAGES}
 fi
 
 # Start the application
