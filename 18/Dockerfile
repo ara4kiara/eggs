@@ -18,7 +18,10 @@ USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
+RUN mkdir -p /home/container/.config/pip && \
+    echo -e "[global]\nbreak-system-packages = true" > /home/container/.config/pip/pip.conf
+
 # Install Python packages
-RUN pip3 install --upgrade pip setuptools wheel --break-system-packages
+RUN pip3 install --upgrade pip setuptools wheel
 
 CMD [ "/bin/bash", "/entrypoint.sh" ]
