@@ -21,6 +21,11 @@ WORKDIR /home/container
 RUN mkdir -p /home/container/.config/pip && \
     printf "[global]\nbreak-system-packages = true\n" > /home/container/.config/pip/pip.conf
 
+# ================================================================= #
+# LANGKAH DEBUGGING: Tambahkan baris ini untuk verifikasi
+RUN ls -la /home/container/.config/pip/
+# ================================================================= #
+
 # Install Python packages
 RUN pip3 install --upgrade pip setuptools wheel
 
