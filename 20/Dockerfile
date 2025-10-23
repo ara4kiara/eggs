@@ -1,35 +1,33 @@
-FROM node:20-bookworm-slim
+FROM node:20-bookworm-slim [cite: 4]
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
-RUN apt update
-RUN apt -y install git ca-certificates curl build-essential libtool ffmpeg zip unzip imagemagick \
-    && apt -y install python3 python3-pip chromium chromium-driver \
-    && useradd -m -d /home/container container
+# Menggabungkan apt update, install, dan clean up. Menambahkan dependensi canvas & sharp
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git ca-certificates curl build-essential libtool ffmpeg zip unzip imagemagick \
+    python3 python3-pip chromium chromium-driver \
+    # Dependensi untuk node-canvas
+    pkg-config libcairo2-dev libpango1.0-dev libfontconfig1-dev libjpeg-dev libgif-dev librsvg2-dev \
+    # Dependensi untuk sharp (libvips)
+    libvips-dev libglib2.0-dev \
+    && useradd -m -d /home/container container \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf
+RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf 
 
 # Install PM2 globally as root
-RUN npm install -g pm2@latest --unsafe-perm
+RUN npm install -g pm2@latest --unsafe-perm 
 
 # Copy entrypoint.sh and give execute permissions as root
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh 
+RUN chmod +x /entrypoint.sh 
 
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
+USER container [cite: 4]
+ENV USER=container HOME=/home/container [cite: 4]
+WORKDIR /home/container 
 
 # Install Python packages
-RUN pip3 install --upgrade pip setuptools wheel
+RUN pip3 install --upgrade pip setuptools wheel 
 
 CMD [ "/bin/bash", "/entrypoint.sh" ]
-
-
-
-
-
-
-
-
-
