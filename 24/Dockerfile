@@ -1,29 +1,33 @@
-FROM node:24-bookworm-slim
+FROM node:24-bookworm-slim [cite: 1]
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
-RUN apt update
-RUN apt -y install git ca-certificates curl build-essential libtool ffmpeg zip unzip imagemagick \
-    && apt -y install python3 python3-pip chromium chromium-driver pkg-config libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev \
-    && useradd -m -d /home/container container
+# Menggabungkan apt update, install, dan clean up. Menambahkan libfontconfig1-dev dan dependensi sharp
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git ca-certificates curl build-essential libtool ffmpeg zip unzip imagemagick \
+    python3 python3-pip chromium chromium-driver \
+    # Dependensi untuk node-canvas (Menambahkan libfontconfig1-dev)
+    pkg-config libcairo2-dev libpango1.0-dev libfontconfig1-dev libjpeg-dev libgif-dev librsvg2-dev \
+    # Dependensi untuk sharp (libvips)
+    libvips-dev libglib2.0-dev \
+    && useradd -m -d /home/container container \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf
+RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf 
 
 # Install PM2 globally as root
-RUN npm install -g pm2@latest --unsafe-perm
+RUN npm install -g pm2@latest --unsafe-perm 
 
 # Copy entrypoint.sh and give execute permissions as root
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh 
+RUN chmod +x /entrypoint.sh 
 
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
+USER container [cite: 1]
+ENV USER=container HOME=/home/container [cite: 1]
+WORKDIR /home/container 
 
 # Install Python packages
-RUN pip3 install --upgrade pip setuptools wheel
+RUN pip3 install --upgrade pip setuptools wheel 
 
-# Pastikan package canvas sudah versi terbaru agar support Node.js 24
-# Jika error, downgrade base image ke node:22-bullseye-slim
-
-CMD [ "/bin/bash", "/entrypoint.sh" ] 
+CMD [ "/bin/bash", "/entrypoint.sh" ]
