@@ -1,4 +1,4 @@
-FROM node:18-bookworm-slim [cite: 3]
+FROM node:18-bookworm-slim
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
@@ -23,8 +23,8 @@ RUN npm install -g pm2@latest --unsafe-perm
 COPY ./entrypoint.sh /entrypoint.sh 
 RUN chmod +x /entrypoint.sh 
 
-USER container [cite: 3]
-ENV USER=container HOME=/home/container [cite: 3]
+USER container
+ENV USER=container HOME=/home/container
 WORKDIR /home/container 
 
 # Install Python packages
