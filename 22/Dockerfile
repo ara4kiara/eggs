@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim [cite: 5]
+FROM node:22-bookworm-slim
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
@@ -23,13 +23,14 @@ RUN npm install -g pm2@latest --unsafe-perm
 COPY ./entrypoint.sh /entrypoint.sh 
 RUN chmod +x /entrypoint.sh 
 
-USER container [cite: 5]
-ENV USER=container HOME=/home/container [cite: 5]
+USER container
+ENV USER=container HOME=/home/container
 WORKDIR /home/container 
 
 # Install Python packages
-RUN pip3 install --upgrade pip setuptools wheel [cite: 5, 6]
+RUN pip3 install --upgrade pip setuptools wheel
 
-ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1 [cite: 5]
+ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 
 CMD [ "/bin/bash", "/entrypoint.sh" ]
+
