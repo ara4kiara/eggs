@@ -10,6 +10,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config libcairo2-dev libpango1.0-dev libfontconfig1-dev libjpeg-dev libgif-dev librsvg2-dev \
     # Dependensi untuk sharp (libvips)
     libvips-dev libglib2.0-dev \
+    # Dependensi FFmpeg development libraries untuk native modules (converter, sticker)
+    libwebp-dev libavformat-dev libavcodec-dev libavutil-dev \
+    libswresample-dev libswscale-dev libavfilter-dev \
+    cmake \
     && useradd -m -d /home/container container \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
