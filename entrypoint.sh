@@ -1,87 +1,30 @@
 #!/bin/bash
 
-# Update and install dependencies if needed
+# Update git jika setting auto update aktif
 if [[ -d .git ]] && [[ ${AUTO_UPDATE} == "1" ]]; then
     git pull
 fi
 
-# Install additional packages if specified
+# Install paket tambahan dari variable environment
 if [[ ! -z ${NODE_PACKAGES} ]]; then
     npm install ${NODE_PACKAGES}
 fi
 
-# Install dependencies from package.json if it exists
+# Install dependencies bot (Disini otomatis terjadi build canvas jika diperlukan)
 if [ -f /home/container/package.json ]; then
-    # Install with ignore-scripts to skip native module compilation during install
-    # We'll rebuild canvas manually afterwards
-    echo "Installing dependencies (skipping native module scripts to avoid isolated-vm errors)..."
-    npm install --ignore-scripts 2>&1 | grep -v "isolated-vm" | tail -20 || {
-        echo "npm install completed (isolated-vm errors are expected on Node.js v24)"
-    }
-    
-    # Rebuild ONLY canvas (skip isolated-vm and other incompatible modules)
-    # This is especially important for Node.js v24 compatibility
-    echo "Rebuilding canvas native module for Node.js v24 compatibility..."
-    
-    # Rebuild canvas and other essential native modules
-    # Use npm rebuild with specific packages to avoid isolated-vm
-    echo "Rebuilding essential native modules (canvas, hummus, etc.)..."
-    echo "Note: This may take 2-5 minutes. Please be patient..."
-    
-    # Rebuild canvas using npm rebuild (more reliable than direct node-gyp)
-    if [ -d /home/container/node_modules/canvas ]; then
-        echo "[1/3] Rebuilding canvas (this may take 2-3 minutes)..."
-        echo "      Compiling native module - please wait..."
-        cd /home/container
-        # Use npm rebuild with timeout and show ALL output (not filtered)
-        # This ensures we see progress and don't appear stuck
-        timeout 300 npm rebuild canvas --build-from-source 2>&1 | tee /tmp/canvas_rebuild.log | grep -v "isolated-vm" || {
-            EXIT_CODE=$?
-            if [ $EXIT_CODE -eq 124 ]; then
-                echo "⚠️  Canvas rebuild timed out after 5 minutes. Continuing anyway..."
-            else
-                echo "✅ Canvas rebuild process completed (check /tmp/canvas_rebuild.log for full details)"
-            fi
-        }
-    fi
-    
-    # Rebuild hummus (needed for AraBotz handler) - skip if it fails (non-critical)
-    if [ -d /home/container/node_modules/hummus ]; then
-        echo "[2/3] Attempting to rebuild hummus (may fail on Node.js v24 - this is OK)..."
-        cd /home/container
-        timeout 180 npm rebuild hummus --build-from-source 2>&1 | grep -v "isolated-vm" | tail -10 || {
-            echo "Hummus rebuild skipped (not compatible with Node.js v24 - this is expected)"
-        }
-    fi
-    
-    # Rebuild canvas in canvafy if it exists
-    if [ -d /home/container/node_modules/canvafy/node_modules/canvas ]; then
-        echo "[3/3] Rebuilding canvas in canvafy..."
-        cd /home/container/node_modules/canvafy/node_modules/canvas
-        timeout 180 npx node-gyp rebuild 2>&1 | grep -v "isolated-vm" | tail -10 || {
-            echo "Canvafy canvas rebuild completed"
-        }
-        cd /home/container
-    fi
-    
-    echo "Native module rebuild process completed."
-    
-    echo "Canvas rebuild completed (isolated-vm errors ignored - not compatible with Node.js v24)."
+    npm install
 fi
 
-# Install Python packages
+# Install paket python
 if [[ ! -z ${PYTHON_PACKAGES} ]]; then
     pip3 install ${PYTHON_PACKAGES}
 fi
 
-# Start the application
+# Logic untuk menjalankan bot
 if [[ ${CMD_RUN} == "bash" ]]; then
     echo -e "\n\e[1;34m========================================="
     echo -e "\e[1;32m        Konsol Bash Aktif 🚀\e[0m"
     echo -e "\e[1;34m========================================="
-    echo -e "\e[1;36mCreated by: ar4kiara | Pterodactyl Panel\e[0m"
-    echo -e "\e[1;34m-----------------------------------------\e[0m"
-    echo -e "\e[1;33mSilakan masukkan perintah Anda...\e[0m\n"
     exec bash
 elif [[ ${CMD_RUN} =~ ^npm ]]; then
     exec ${CMD_RUN}
@@ -90,7 +33,7 @@ elif [[ ${CMD_RUN} =~ ^yarn ]]; then
 elif [[ ${CMD_RUN} =~ ^node ]]; then
     exec ${CMD_RUN}
 else
-    # Cek jika CMD_RUN mengandung spasi (ada argumen)
+    # Logic PM2
     if [[ "${CMD_RUN}" == *" "* ]]; then
         FILE=$(echo ${CMD_RUN} | awk '{print $1}')
         ARGS=$(echo ${CMD_RUN} | cut -d' ' -f2-)
