@@ -13,6 +13,29 @@ fi
 # Install dependencies from package.json if it exists
 if [ -f /home/container/package.json ]; then
     npm install
+    # Rebuild native modules (canvas, canvafy, etc.) after install
+    # This is especially important for Node.js v24 compatibility
+    echo "Checking for native modules that need rebuilding..."
+    
+    # Rebuild canvas if it exists
+    if [ -d /home/container/node_modules/canvas ]; then
+        echo "Rebuilding canvas native module for Node.js compatibility..."
+        npm rebuild canvas --build-from-source 2>&1 | head -20 || echo "Canvas rebuild failed, continuing anyway..."
+    fi
+    
+    # Rebuild canvafy dependencies (canvas is a dependency of canvafy)
+    if [ -d /home/container/node_modules/canvafy ]; then
+        echo "Rebuilding canvafy dependencies..."
+        # Rebuild canvas first if it's a dependency
+        if [ -d /home/container/node_modules/canvafy/node_modules/canvas ]; then
+            cd /home/container/node_modules/canvafy/node_modules/canvas
+            npm rebuild --build-from-source 2>&1 | head -20 || echo "Canvafy canvas rebuild failed, continuing anyway..."
+            cd /home/container
+        fi
+        npm rebuild canvafy --build-from-source 2>&1 | head -20 || echo "Canvafy rebuild failed, continuing anyway..."
+    fi
+    
+    echo "Native module rebuild check completed."
 fi
 
 # Install Python packages
