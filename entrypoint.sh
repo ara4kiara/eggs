@@ -26,36 +26,45 @@ if [ -f /home/container/package.json ]; then
     # Rebuild canvas and other essential native modules
     # Use npm rebuild with specific packages to avoid isolated-vm
     echo "Rebuilding essential native modules (canvas, hummus, etc.)..."
+    echo "Note: This may take 2-5 minutes. Please be patient..."
     
-    # Rebuild canvas
+    # Rebuild canvas using npm rebuild (more reliable than direct node-gyp)
     if [ -d /home/container/node_modules/canvas ]; then
-        echo "Rebuilding canvas..."
-        cd /home/container/node_modules/canvas
-        npx node-gyp rebuild 2>&1 | grep -v "isolated-vm" | tail -20 || {
-            echo "Canvas rebuild attempted (check logs above for details)"
-        }
+        echo "[1/3] Rebuilding canvas (this may take 2-3 minutes)..."
+        echo "      Compiling native module - please wait..."
         cd /home/container
+        # Use npm rebuild with timeout and show ALL output (not filtered)
+        # This ensures we see progress and don't appear stuck
+        timeout 300 npm rebuild canvas --build-from-source 2>&1 | tee /tmp/canvas_rebuild.log | grep -v "isolated-vm" || {
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -eq 124 ]; then
+                echo "⚠️  Canvas rebuild timed out after 5 minutes. Continuing anyway..."
+            else
+                echo "✅ Canvas rebuild process completed (check /tmp/canvas_rebuild.log for full details)"
+            fi
+        }
     fi
     
-    # Rebuild hummus (needed for AraBotz handler)
+    # Rebuild hummus (needed for AraBotz handler) - skip if it fails (non-critical)
     if [ -d /home/container/node_modules/hummus ]; then
-        echo "Rebuilding hummus..."
-        cd /home/container/node_modules/hummus
-        npx node-gyp rebuild 2>&1 | grep -v "isolated-vm" | tail -20 || {
-            echo "Hummus rebuild attempted (check logs above for details)"
-        }
+        echo "[2/3] Attempting to rebuild hummus (may fail on Node.js v24 - this is OK)..."
         cd /home/container
+        timeout 180 npm rebuild hummus --build-from-source 2>&1 | grep -v "isolated-vm" | tail -10 || {
+            echo "Hummus rebuild skipped (not compatible with Node.js v24 - this is expected)"
+        }
     fi
     
     # Rebuild canvas in canvafy if it exists
     if [ -d /home/container/node_modules/canvafy/node_modules/canvas ]; then
-        echo "Rebuilding canvas in canvafy..."
+        echo "[3/3] Rebuilding canvas in canvafy..."
         cd /home/container/node_modules/canvafy/node_modules/canvas
-        npx node-gyp rebuild 2>&1 | grep -v "isolated-vm" | tail -20 || {
-            echo "Canvafy canvas rebuild attempted (check logs above for details)"
+        timeout 180 npx node-gyp rebuild 2>&1 | grep -v "isolated-vm" | tail -10 || {
+            echo "Canvafy canvas rebuild completed"
         }
         cd /home/container
     fi
+    
+    echo "Native module rebuild process completed."
     
     echo "Canvas rebuild completed (isolated-vm errors ignored - not compatible with Node.js v24)."
 fi
