@@ -23,24 +23,36 @@ if [ -f /home/container/package.json ]; then
     # This is especially important for Node.js v24 compatibility
     echo "Rebuilding canvas native module for Node.js v24 compatibility..."
     
-    # Rebuild canvas directly using node-gyp (skip isolated-vm completely)
-    # npm rebuild tries to rebuild ALL native modules including isolated-vm (incompatible with Node.js v24)
+    # Rebuild canvas and other essential native modules
+    # Use npm rebuild with specific packages to avoid isolated-vm
+    echo "Rebuilding essential native modules (canvas, hummus, etc.)..."
+    
+    # Rebuild canvas
     if [ -d /home/container/node_modules/canvas ]; then
-        echo "Rebuilding canvas using node-gyp (skipping isolated-vm)..."
+        echo "Rebuilding canvas..."
         cd /home/container/node_modules/canvas
-        # Use node-gyp directly to rebuild only canvas
-        node-gyp rebuild 2>&1 | grep -E "(canvas|gyp|success|error|Warning)" | tail -15 || {
-            echo "Canvas rebuild completed (isolated-vm errors are expected on Node.js v24)"
+        npx node-gyp rebuild 2>&1 | grep -v "isolated-vm" | tail -20 || {
+            echo "Canvas rebuild attempted (check logs above for details)"
+        }
+        cd /home/container
+    fi
+    
+    # Rebuild hummus (needed for AraBotz handler)
+    if [ -d /home/container/node_modules/hummus ]; then
+        echo "Rebuilding hummus..."
+        cd /home/container/node_modules/hummus
+        npx node-gyp rebuild 2>&1 | grep -v "isolated-vm" | tail -20 || {
+            echo "Hummus rebuild attempted (check logs above for details)"
         }
         cd /home/container
     fi
     
     # Rebuild canvas in canvafy if it exists
     if [ -d /home/container/node_modules/canvafy/node_modules/canvas ]; then
-        echo "Rebuilding canvas in canvafy using node-gyp..."
+        echo "Rebuilding canvas in canvafy..."
         cd /home/container/node_modules/canvafy/node_modules/canvas
-        node-gyp rebuild 2>&1 | grep -E "(canvas|gyp|success|error|Warning)" | tail -15 || {
-            echo "Canvafy canvas rebuild completed (isolated-vm errors are expected on Node.js v24)"
+        npx node-gyp rebuild 2>&1 | grep -v "isolated-vm" | tail -20 || {
+            echo "Canvafy canvas rebuild attempted (check logs above for details)"
         }
         cd /home/container
     fi
