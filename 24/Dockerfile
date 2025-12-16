@@ -6,8 +6,9 @@ LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates curl build-essential libtool ffmpeg zip unzip imagemagick \
     python3 python3-pip chromium chromium-driver \
-    # Dependensi untuk node-canvas (Menambahkan libfontconfig1-dev)
+    # Dependensi untuk node-canvas (Lengkap untuk Node.js v24)
     pkg-config libcairo2-dev libpango1.0-dev libfontconfig1-dev libjpeg-dev libgif-dev librsvg2-dev \
+    libpixman-1-dev libpangocairo-1.0-0 \
     # Dependensi untuk sharp (libvips)
     libvips-dev libglib2.0-dev \
     # Dependensi FFmpeg development libraries untuk native modules (converter, sticker)
