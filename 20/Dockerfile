@@ -2,36 +2,60 @@ FROM node:20-bookworm-slim
 
 LABEL author="ara4kiara" maintainer="ar4kiara.vps@gmail.com"
 
-# Menggabungkan apt update, install, dan clean up. Menambahkan dependensi canvas & sharp
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git ca-certificates curl build-essential libtool ffmpeg zip unzip imagemagick \
-    python3 python3-pip chromium chromium-driver \
-    # Dependensi untuk node-canvas
+# Semua jadi satu layer biar tetap slim
+RUN apt-get update -qq && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    \
+    # tools dasar
+    git ca-certificates curl build-essential libtool \
+    zip unzip imagemagick ffmpeg \
+    python3 python3-pip \
+    \
+    # chromium + driver
+    chromium chromium-driver \
+    \
+    # dbus (buat ngurangin error "failed to connect to bus")
+    dbus dbus-user-session \
+    \
+    # chromium runtime deps yang sering dibutuhin di Debian slim
+    libnss3 libnspr4 \
+    libatk-bridge2.0-0 libatk1.0-0 \
+    libgtk-3-0 \
+    libgbm1 libdrm2 libxshmfence1 \
+    libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 \
+    libasound2 \
+    \
+    # fonts biar render pdf/screenshot gak aneh
+    fonts-liberation fonts-noto-color-emoji \
+    \
+    # deps image processing (tetap dari punyamu)
     pkg-config libcairo2-dev libpango1.0-dev libfontconfig1-dev libjpeg-dev libgif-dev librsvg2-dev \
-    # Dependensi untuk sharp (libvips)
     libvips-dev libglib2.0-dev \
-    # Dependensi FFmpeg development libraries untuk native modules (converter, sticker)
     libwebp-dev libavformat-dev libavcodec-dev libavutil-dev \
     libswresample-dev libswscale-dev libavfilter-dev \
     cmake \
-    && useradd -m -d /home/container container \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && \
+    \
+    # user container
+    useradd -m -d /home/container container \
+    && \
+    \
+    # bersihin cache biar slim (FIX: jangan apt-get purge tanpa target)
+    apt-get autoremove -y && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* /var/cache/apt/*
 
-RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf 
+# pip biar bisa install tanpa drama di debian
+RUN printf "[global]\nbreak-system-packages = true\n" > /etc/pip.conf
 
-# Install PM2 globally as root
-RUN npm install -g pm2@latest --unsafe-perm 
+RUN npm install --omit=dev -g pm2@latest --unsafe-perm
 
-# Copy entrypoint.sh and give execute permissions as root
-COPY ./entrypoint.sh /entrypoint.sh 
-RUN chmod +x /entrypoint.sh 
+COPY --chmod=+x ./entrypoint.sh /entrypoint.sh
 
 USER container
 ENV USER=container HOME=/home/container
-WORKDIR /home/container 
+WORKDIR /home/container
 
-# Install Python packages
-RUN pip3 install --upgrade pip setuptools wheel 
+RUN python3 -m pip install --no-cache-dir --upgrade pip virtualenv
 
 CMD [ "/bin/bash", "/entrypoint.sh" ]
