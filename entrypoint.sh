@@ -30,6 +30,42 @@ elif command -v chromium-browser >/dev/null 2>&1; then
   export CHROME_BIN="$(command -v chromium-browser)"
 fi
 
+# --- Optional: Headful display via Xvfb + noVNC (ENABLE_VNC=1) ---
+# Tujuan: kamu bisa buka noVNC di browser dan solve Turnstile secara manual.
+# Tanpa ENABLE_VNC=1, script berjalan normal seperti sebelumnya.
+if [[ "${ENABLE_VNC}" == "1" ]]; then
+  export DISPLAY=${DISPLAY:-:99}
+  export XDG_RUNTIME_DIR=/tmp/runtime-container
+  mkdir -p "$XDG_RUNTIME_DIR" || true
+  chmod 700 "$XDG_RUNTIME_DIR" 2>/dev/null || true
+
+  # Start virtual X server
+  if command -v Xvfb >/dev/null 2>&1; then
+    Xvfb ${DISPLAY} -screen 0 1280x720x24 -ac +extension GLX +render -noreset >/dev/null 2>&1 &
+    sleep 1
+  fi
+
+  # Lightweight window manager
+  if command -v fluxbox >/dev/null 2>&1; then
+    fluxbox >/dev/null 2>&1 &
+    sleep 1
+  fi
+
+  # VNC server
+  if command -v x11vnc >/dev/null 2>&1; then
+    x11vnc -display ${DISPLAY} -forever -shared -nopw -rfbport 5900 -listen 0.0.0.0 >/dev/null 2>&1 &
+    sleep 1
+  fi
+
+  # noVNC on 6080 (web UI)
+  if command -v websockify >/dev/null 2>&1; then
+    websockify --web=/usr/share/novnc/ 0.0.0.0:6080 0.0.0.0:5900 >/dev/null 2>&1 &
+    sleep 1
+  fi
+
+  echo "[ENTRYPOINT] noVNC enabled on port 6080 (ENABLE_VNC=1)"
+fi
+
 # --- Update git jika setting auto update aktif ---
 if [[ -d .git ]] && [[ ${AUTO_UPDATE} == "1" ]]; then
     git pull
