@@ -34,6 +34,9 @@ RUN apt-get update -qq && \
     libwebp-dev libavformat-dev libavcodec-dev libavutil-dev \
     libswresample-dev libswscale-dev libavfilter-dev \
     cmake \
+    \
+    # --- optional GUI stack for headful chromium via noVNC (Pterodactyl) ---
+    xvfb fluxbox x11vnc novnc websockify \
     && \
     \
     # user container
